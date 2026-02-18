@@ -1,15 +1,108 @@
-<!-- ATM Rablás Jelentés -->
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ATM Rablás Jelentés</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* TELJES ATM HÁTTÉR */
+#atm-report {
+    position: relative;
+    min-height: 100vh;
+    width: 100%;
+    background: url('https://images.unsplash.com/photo-1581091870627-3e7f6f0fbe14') no-repeat center center;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Sötét overlay */
+.atm-overlay {
+    background: rgba(0, 0, 0, 0.75);
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.report-form {
+    background: rgba(20, 20, 20, 0.95);
+    padding: 35px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 0 40px rgba(255, 0, 0, 0.6);
+    text-align: center;
+    color: white;
+}
+
+.report-form h2 {
+    margin-bottom: 25px;
+}
+
+.report-form input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.report-form button {
+    width: 100%;
+    padding: 12px;
+    background: #ff1a1a;
+    border: none;
+    color: white;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.report-form button:hover {
+    background: #cc0000;
+}
+
+#atm-message {
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+#atm-message.success {
+    color: #00ff88;
+}
+
+#atm-message.error {
+    color: #ff4444;
+}
+</style>
+</head>
+
+<body>
+
 <section id="atm-report">
     <div class="atm-overlay">
-        <h2>💣 ATM Rablás Jelentés</h2>
-
         <div class="report-form">
+
+            <h2>💣 ATM Rablás Jelentés</h2>
+
             <form id="atm-form">
 
-                <input type="number" 
+                <input type="text" 
                        name="dirtymoney" 
-                       placeholder="Piszkospénz mennyiség ($)" 
-                       min="1" 
+                       placeholder="Piszkospénz mennyiség (Ft)" 
+                       pattern="[0-9 ]+" 
+                       title="Csak számokat írj be (pl: 1250000 vagy 1 250 000)" 
                        required>
 
                 <input type="text" 
@@ -33,80 +126,52 @@
             </form>
 
             <p id="atm-message"></p>
+
         </div>
     </div>
 </section>
 
-<style>
-/* TELJESEN KÜLÖN ATM HÁTTÉR */
-#atm-report {
-    position: relative;
-    min-height: 100vh;
-    width: 100%;
-    background: url('https://images.unsplash.com/photo-1581091870627-3e7f6f0fbe14') no-repeat center center;
-    background-size: cover;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+<script>
+emailjs.init("RJ8KpMBsys6naM2Ii"); // Public Key
 
-/* Sötét overlay réteg */
-.atm-overlay {
-    background: rgba(0, 0, 0, 0.75);
-    width: 100%;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 40px 20px;
-    color: white;
-}
+const form = document.getElementById("atm-form");
+const message = document.getElementById("atm-message");
 
-.report-form {
-    background: rgba(20, 20, 20, 0.9);
-    padding: 30px;
-    border-radius: 12px;
-    width: 100%;
-    max-width: 400px;
-    box-shadow: 0 0 35px rgba(255, 0, 0, 0.5);
-}
+form.addEventListener("submit", function(e){
+    e.preventDefault();
 
-.report-form input {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 15px;
-    border: none;
-    border-radius: 6px;
-}
+    const btn = this.querySelector("button");
+    btn.disabled = true;
+    btn.textContent = "Küldés...";
 
-.report-form button {
-    width: 100%;
-    padding: 12px;
-    background: #ff1a1a;
-    border: none;
-    color: white;
-    font-weight: bold;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: 0.3s;
-}
+    emailjs.sendForm(
+        "service_h01oyeo",      // Service ID
+        "template_hfqpbia",     // Template ID
+        this
+    )
+    .then(() => {
+        showMessage("✅ ATM jelentés sikeresen elküldve!", "success");
+        form.reset();
+    })
+    .catch(() => {
+        showMessage("❌ Hiba történt, próbáld újra!", "error");
+    })
+    .finally(() => {
+        btn.disabled = false;
+        btn.textContent = "Küldés";
+    });
+});
 
-.report-form button:hover {
-    background: #cc0000;
+function showMessage(msg, type) {
+    message.textContent = msg;
+    message.className = type;
+    setTimeout(() => {
+        message.textContent = "";
+        message.className = "";
+    }, 5000);
 }
+</script>
 
-#atm-message {
-    text-align: center;
-    margin-top: 15px;
-    font-weight: bold;
-}
-
-#atm-message.success {
-    color: #00ff88;
-}
-
-#atm-message.error {
-    color: #ff4444;
-}
-</style>
+</body>
+</html>
