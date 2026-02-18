@@ -1,6 +1,7 @@
 <!-- ATM Rablás Jelentés -->
 <section id="atm-report">
     <h2>💣 ATM Rablás Jelentés</h2>
+
     <div class="report-form">
         <form id="atm-form">
 
@@ -15,13 +16,14 @@
                    placeholder="Neved" 
                    required>
 
-            <input type="datetime-local" 
+            <input type="text" 
                    name="time" 
+                   placeholder="Időpont (pl: 2026.02.18 21:45)" 
                    required>
 
             <input type="url" 
                    name="imgur" 
-                   placeholder="Imgur link helye (https://imgur.com/...)" 
+                   placeholder="Imgur link (https://imgur.com/...)" 
                    pattern="https://(i\.)?imgur\.com/.*" 
                    required>
 
@@ -29,13 +31,78 @@
 
         </form>
 
-        <p id="atm-message" style="text-align:center; margin-top:10px;"></p>
+        <p id="atm-message"></p>
     </div>
 </section>
 
+<style>
+#atm-report {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #1a1a1a, #2b0000);
+    color: white;
+    padding: 40px 20px;
+}
+
+#atm-report h2 {
+    margin-bottom: 30px;
+}
+
+.report-form {
+    background: rgba(0,0,0,0.7);
+    padding: 30px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 0 25px rgba(255,0,0,0.3);
+}
+
+.report-form input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: none;
+    border-radius: 6px;
+    outline: none;
+}
+
+.report-form button {
+    width: 100%;
+    padding: 12px;
+    background: #ff1a1a;
+    border: none;
+    color: white;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.report-form button:hover {
+    background: #cc0000;
+}
+
+#atm-message {
+    text-align: center;
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+#atm-message.success {
+    color: #00ff88;
+}
+
+#atm-message.error {
+    color: #ff4444;
+}
+</style>
+
 <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
 <script>
-emailjs.init("PUBLICKEY"); // Public Key
+emailjs.init("RJ8KpMBsys6naM2Ii"); // Public Key
 
 const form = document.getElementById("atm-form");
 const message = document.getElementById("atm-message");
@@ -48,13 +115,13 @@ form.addEventListener("submit", function(e){
     btn.textContent = "Küldés...";
 
     emailjs.sendForm(
-        "service_xxxxxx",      // Service ID
-        "template_xxxxx",     // Template ID
+        "service_h01oyeo",
+        "template_hfqpbia",
         this
     )
     .then(() => {
         showMessage("✅ ATM jelentés sikeresen elküldve!", "success");
-        form.reset(); // csak az új adat maradjon, régit nem tart meg
+        form.reset();
     })
     .catch(() => {
         showMessage("❌ Hiba történt, próbáld újra!", "error");
